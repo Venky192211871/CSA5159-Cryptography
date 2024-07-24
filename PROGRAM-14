@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <string.h>
+#define MAX_LEN 100
+#define ALPHABET_SIZE 26
+void encrypt(const char *plaintext, const int *key, char *ciphertext, int keyLength) {
+    int ptLen = strlen(plaintext);
+    for (int i = 0; i < ptLen; i++) {
+        if (plaintext[i] == ' ') {
+            ciphertext[i] = ' ';
+        } else {
+            int ptChar = plaintext[i] - 'a';
+            int keyChar = key[i % keyLength];
+            ciphertext[i] = ((ptChar + keyChar) % ALPHABET_SIZE) + 'a';
+        }
+    }
+    ciphertext[ptLen] = '\0';
+}
+void findKey(const char *ciphertext, const char *plaintext, int *key, int keyLength) {
+    int ptLen = strlen(plaintext);
+    for (int i = 0; i < ptLen; i++) {
+        if (plaintext[i] == ' ') {
+            continue;
+        }
+        int ctChar = ciphertext[i] - 'a';
+        int ptChar = plaintext[i] - 'a';
+        key[i % keyLength] = (ctChar - ptChar + ALPHABET_SIZE) % ALPHABET_SIZE;
+    }
+}
+int main() {
+    int keyStream[] = {9, 0, 1, 7, 23, 15, 21, 14, 11, 11, 2, 8, 9};
+    int keyLength = sizeof(keyStream) / sizeof(keyStream[0]);
+    char plaintext[MAX_LEN] = "send more money";
+    char ciphertext[MAX_LEN];
+    encrypt(plaintext, keyStream, ciphertext, keyLength);
+    printf("Ciphertext: %s\n", ciphertext);
+    char knownCiphertext[MAX_LEN] = "csh fqk vgqtf";
+    char desiredPlaintext[MAX_LEN] = "cash not needed";
+    int foundKey[MAX_LEN];
+    findKey(knownCiphertext, desiredPlaintext, foundKey, keyLength);
+    printf("Found Key: ");
+    for (int i = 0; i < keyLength; i++) {
+        printf("%d ", foundKey[i]);
+    }
+    printf("\n");
+    return 0;
+}
+
+OUTPUT:
+Ciphertext: beok bjfp owwny
+Found Key: -23 -22 15 -20 11141120 3 22 -6 11146192 19 12 15 2
