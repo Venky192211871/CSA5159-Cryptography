@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <string.h>
+#define SIZE 2
+#define MOD 26
+void matrixMultiply(const int mat[SIZE][SIZE], const int vec[SIZE], int res[SIZE]) {
+    for (int i = 0; i < SIZE; i++) {
+        res[i] = 0;
+        for (int j = 0; j < SIZE; j++) {
+            res[i] = (res[i] + mat[i][j] * vec[j]) % MOD;
+        }
+    }
+}
+int modInverse(int a, int m) {
+    for (int x = 1; x < m; x++) {
+        if ((a * x) % m == 1) return x;
+    }
+    return -1;
+}
+void matrixInverse(const int mat[SIZE][SIZE], int inv[SIZE][SIZE]) {
+    int det = (mat[0][0] * mat[1][1] - mat[0][1] * mat[1][0]) % MOD;
+    det = (det + MOD) % MOD;
+    int invDet = modInverse(det, MOD);
+    inv[0][0] = (mat[1][1] * invDet) % MOD;
+    inv[0][1] = (-mat[0][1] * invDet) % MOD;
+    inv[1][0] = (-mat[1][0] * invDet) % MOD;
+    inv[1][1] = (mat[0][0] * invDet) % MOD;
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            inv[i][j] = (inv[i][j] + MOD) % MOD;
+        }
+    }
+}
+int main() {
+    int key[SIZE][SIZE] = {{9, 4}, {5, 7}};
+    int invKey[SIZE][SIZE];
+    char plaintext[] = "meetmeattheusualplaceattenratherthaneightoclock";
+    printf("Encrypted: ");
+    for (int i = 0; i < strlen(plaintext); i += 2) {
+        if (plaintext[i] == ' ') continue;
+        int vec[SIZE] = {plaintext[i] - 'a', plaintext[i + 1] - 'a'};
+        int enc[SIZE];
+        matrixMultiply(key, vec, enc);
+        printf("%c%c ", enc[0] + 'A', enc[1] + 'A');
+    }
+    printf("\n");
+    matrixInverse(key, invKey);
+    printf("Decrypted: ");
+    for (int i = 0; i < strlen(plaintext); i += 2) {
+        if (plaintext[i] == ' ') continue;
+        int vec[SIZE] = {plaintext[i] - 'a', plaintext[i + 1] - 'a'};
+        int dec[SIZE];
+        matrixMultiply(invKey, vec, dec);
+        printf("%c%c", dec[0] + 'a', dec[1] + 'a');
+    }
+    printf("\n");
+    return 0;
+}
+
+OUTPUT:
+Encrypted: UK IX UK YD RO ME IW SZ XW IO KU NU KH XH RO AJ RO AN QY EB TL KJ EG 5<
+Decrypted: euopeuuhxsaosqcpzgyyuilguvhvxsqrxsanmakfdlmtqaKT
