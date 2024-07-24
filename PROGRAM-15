@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#define ALPHABET_SIZE 26
+#define TOP_N 10
+void computeFrequency(const char *text, int *freq) {
+    for (int i = 0; text[i]; i++) {
+        if (isalpha(text[i])) {
+            freq[tolower(text[i]) - 'a']++;
+        }
+    }
+}
+void decrypt(const char *ciphertext, int key, char *plaintext) {
+    for (int i = 0; ciphertext[i]; i++) {
+        if (isalpha(ciphertext[i])) {
+            plaintext[i] = ((tolower(ciphertext[i]) - 'a' - key + ALPHABET_SIZE) % ALPHABET_SIZE) + 'a';
+        } else {
+            plaintext[i] = ciphertext[i];
+        }
+    }
+    plaintext[strlen(ciphertext)] = '\0';
+}
+void printTopPlaintexts(const char *ciphertext, int topN) {
+    int freq[ALPHABET_SIZE] = {0};
+    int possibleKeys[ALPHABET_SIZE];
+    char plaintext[256];
+    computeFrequency(ciphertext, freq);
+    printf("Top %d possible plaintexts:\n", topN);
+    for (int key = 0; key < ALPHABET_SIZE; key++) {
+        decrypt(ciphertext, key, plaintext);
+        printf("Key %2d: %s\n", key, plaintext);
+    }
+}
+int main() {
+    char ciphertext[256];
+    int topN;
+    printf("Enter ciphertext: ");
+    fgets(ciphertext, sizeof(ciphertext), stdin);
+    ciphertext[strcspn(ciphertext, "\n")] = '\0';
+    printf("Enter number of top possible plaintexts to show: ");
+    scanf("%d", &topN);
+    if (topN > ALPHABET_SIZE) topN = ALPHABET_SIZE;
+    printTopPlaintexts(ciphertext, topN);
+    return 0;
+}
+
+OUTPUT:
+Enter ciphertext: WE KNOW ALL
+Enter number of top possible plaintexts to show: 3
+Top 3 possible plaintexts:
+Key  0: we know all
+Key  1: vd jmnv zkk
+Key  2: uc ilmu yjj
+Key  3: tb hklt xii
+Key  4: sa gjks whh
+Key  5: rz fijr vgg
+Key  6: qy ehiq uff
+Key  7: px dghp tee
+Key  8: ow cfgo sdd
+Key  9: nv befn rcc
+Key 10: mu adem qbb
+Key 11: lt zcdl paa
+Key 12: ks ybck ozz
+Key 13: jr xabj nyy
+Key 14: iq wzai mxx
+Key 15: hp vyzh lww
+Key 16: go uxyg kvv
+Key 17: fn twxf juu
+Key 18: em svwe itt
+Key 19: dl ruvd hss
+Key 20: ck qtuc grr
+Key 21: bj pstb fqq
+Key 22: ai orsa epp
+Key 23: zh nqrz doo
+Key 24: yg mpqy cnn
+Key 25: xf lopx bmm
